@@ -8,47 +8,45 @@
 import SwiftUI
 
 struct ContentView: View {
-    var emojis = ["🚗",  "🚘", "🚎", "🛴", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎", "🏍", "🛵", "🦽", "🦼", "🛺", "🚲", "🛹"]
+    var emojis = ["🚗",  "🚘", "🚎", "🛴", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎", "🏍", "🛵", "🦽", "🦼", "🛺", "🚲", "🛹", ]
     
-    @State var emojiCount = 4
+    @State var emojiCount = 15
     var body: some View {
         VStack{
-            HStack {
-                // ForEach는 id값을 필수로 인자로 받는다.
-                ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
-                    CardView(content: emoji)
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 20))]) {
+                    // ForEach는 id값을 필수로 인자로 받는다.
+                    ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
+                        CardView(content: emoji).aspectRatio(2/3, contentMode: .fit)
+                    }
                 }
             }
+            .foregroundColor(.orange)
+            Spacer()
             HStack{
                 add
                 Spacer()
                 remove
             }
+            .font(.largeTitle)
             .padding(.horizontal)
         }
         .padding(.horizontal)
-        .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
     }
     
     var remove: some View {
         Button(action: {
-            emojiCount -= 1
+           if emojiCount > 1 { emojiCount -= 1}
         }, label: {
-            VStack{
-                Text("Remove")
-                Text("Card")
-            }
+            Image(systemName: "minus.circle")
         })
     }
     
     var add: some View {
         Button(action: {
-            emojiCount += 1
+            if emojiCount < emojis.count {emojiCount += 1}
         }, label: {
-            VStack{
-                Text("Add")
-                Text("Card")
-            }
+            Image(systemName: "plus.circle")
         })
     }
 }
@@ -64,7 +62,8 @@ struct CardView: View {
             let shape = RoundedRectangle(cornerRadius: 25.0)
             if isFaceUp {
                 shape.fill().foregroundColor(.white)
-                shape.stroke(lineWidth: 3)
+                // strokeBorder outside border 설정
+                shape.strokeBorder(lineWidth: 3)
             Text(content)
                 .font(.largeTitle)
             } else {

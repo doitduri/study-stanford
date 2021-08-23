@@ -7,14 +7,17 @@
 
 import SwiftUI
 
+
+// View
+// Model에 의존해서 View를 보여줄 수 있어야 함
 struct ContentView: View {
     var emojis = ["🚗",  "🚘", "🚎", "🛴", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎", "🏍", "🛵", "🦽", "🦼", "🛺", "🚲", "🛹", ]
     
-    @State var emojiCount = 15
+    @State var emojiCount = 10
     var body: some View {
         VStack{
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 20))]) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]) {
                     // ForEach는 id값을 필수로 인자로 받는다.
                     ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
                         CardView(content: emoji).aspectRatio(2/3, contentMode: .fit)

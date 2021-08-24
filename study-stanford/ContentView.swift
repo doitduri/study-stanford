@@ -11,71 +11,68 @@ import SwiftUI
 // View
 // Model에 의존해서 View를 보여줄 수 있어야 함
 struct ContentView: View {
-    var emojis = ["🚗",  "🚘", "🚎", "🛴", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎", "🏍", "🛵", "🦽", "🦼", "🛺", "🚲", "🛹", ]
+    let viewModel: EmojiMemoryGame
     
     @State var emojiCount = 10
     var body: some View {
         VStack{
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]) {
-                    // ForEach는 id값을 필수로 인자로 받는다.
-                    ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
-                        CardView(content: emoji).aspectRatio(2/3, contentMode: .fit)
+                    ForEach(viewModel.cards) { card in
+                        CardView(card: card).aspectRatio(2/3, contentMode: .fit)
                     }
                 }
             }
             .foregroundColor(.orange)
             Spacer()
-            HStack{
-                add
-                Spacer()
-                remove
-            }
-            .font(.largeTitle)
-            .padding(.horizontal)
+//            HStack{
+//                add
+//                Spacer()
+//                remove
+//            }
+//            .font(.largeTitle)
+//            .padding(.horizontal)
         }
         .padding(.horizontal)
     }
     
-    var remove: some View {
-        Button(action: {
-           if emojiCount > 1 { emojiCount -= 1}
-        }, label: {
-            Image(systemName: "minus.circle")
-        })
-    }
-    
-    var add: some View {
-        Button(action: {
-            if emojiCount < emojis.count {emojiCount += 1}
-        }, label: {
-            Image(systemName: "plus.circle")
-        })
-    }
+//    var remove: some View {
+//        Button(action: {
+//           if emojiCount > 1 { emojiCount -= 1}
+//        }, label: {
+//            Image(systemName: "minus.circle")
+//        })
+//    }
+//
+//    var add: some View {
+//        Button(action: {
+//            if emojiCount < emojis.count {emojiCount += 1}
+//        }, label: {
+//            Image(systemName: "plus.circle")
+//        })
+//    }
 }
 
 struct CardView: View {
-    var content: String
-    // 모든 View는 immutable, View 업데이트 시 rebuild, state 통해 로직구성
-    @State var isFaceUp: Bool = true
+    // 되도록 var로 선언되는 경우는 @State, 그 외 let
+    let card: MemoryGame<String>.Card
     
     var body: some View {
         ZStack {
-            // Swift type 추론
             let shape = RoundedRectangle(cornerRadius: 25.0)
-            if isFaceUp {
+            if card.isFaceUp {
                 shape.fill().foregroundColor(.white)
                 // strokeBorder outside border 설정
                 shape.strokeBorder(lineWidth: 3)
-            Text(content)
+                Text(card.content)
                 .font(.largeTitle)
             } else {
                 shape.fill()
             }
         }
-        .onTapGesture {
-            isFaceUp = !isFaceUp
-        }
+//        .onTapGesture {
+//            card.isFaceUp = !card.isFaceUp
+//        }
     }
 }
 
@@ -85,9 +82,10 @@ struct CardView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let game = EmojiMemoryGame()
+        ContentView(viewModel: game)
             .preferredColorScheme(.dark)
-        ContentView()
+        ContentView(viewModel: game)
             .preferredColorScheme(.light)
     }
 }

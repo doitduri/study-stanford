@@ -10,8 +10,11 @@ import SwiftUI
 @main
 struct study_stanfordApp: App {
     var body: some Scene {
+        // class는 참조형, 따라서 game은 EmojiMemoryGame class의 포인터 변수
+        let game =  EmojiMemoryGame()
+         
         WindowGroup {
-            ContentView()
+            ContentView(viewModel: game)
         }
     }
 }

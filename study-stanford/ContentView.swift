@@ -11,7 +11,8 @@ import SwiftUI
 // View
 // Model에 의존해서 View를 보여줄 수 있어야 함
 struct ContentView: View {
-    let viewModel: EmojiMemoryGame
+    // @ObservedObject가 변경 되었을 때 UI re-build
+    @ObservedObject var viewModel: EmojiMemoryGame
     
     @State var emojiCount = 10
     var body: some View {

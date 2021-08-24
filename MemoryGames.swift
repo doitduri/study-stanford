@@ -11,8 +11,24 @@ import Foundation
 struct MemoryGame<CardContent> {
     private(set) var cards: Array<Card>
     
-    func choose(_ card: Card) {
+    mutating func choose(_ card: Card) {
+        // card.isFaceUp.toggle() -> 에러, 파라미터로 넘어온 애들은 let, 따라서 변경 불가
+        // 그래서, cards에서 변경
         
+        let chosenIndex = index(of: card)
+        cards[chosenIndex].isFaceUp.toggle()
+        print("chosenCard = \(cards[chosenIndex])")
+        print(cards)
+    }
+    
+    func index(of card: Card) -> Int {
+        for index in 0..<cards.count{
+            if cards[index].id == card.id {
+                return index
+            }
+        }
+        
+        return 0
     }
     
     init(numberOfPairsOfCards: Int, createCard: (Int) -> CardContent ) {
@@ -31,7 +47,7 @@ struct MemoryGame<CardContent> {
     
     // Identifiable 추가를 함으로써 식별할 수 있음 (protocol strub)
     struct Card: Identifiable {
-        var isFaceUp: Bool = true
+        var isFaceUp: Bool = false
         var isMatched: Bool = false
         var content: CardContent
         

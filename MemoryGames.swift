@@ -8,27 +8,43 @@
 import Foundation
 
 // Model
-struct MemoryGame<CardContent> {
+struct MemoryGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
+    
+    private var indexOfTheOneAndOnlyFaceUpCard: Int?
     
     mutating func choose(_ card: Card) {
         // card.isFaceUp.toggle() -> 에러, 파라미터로 넘어온 애들은 let, 따라서 변경 불가
         // 그래서, cards에서 변경
         
-        let chosenIndex = index(of: card)
-        cards[chosenIndex].isFaceUp.toggle()
-        print("chosenCard = \(cards[chosenIndex])")
+        if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}), !cards[chosenIndex].isFaceUp, !cards[chosenIndex].isMatched {
+            if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
+                if cards[chosenIndex].content == cards[potentialMatchIndex].content {
+                    cards[chosenIndex].isMatched = true
+                    cards[potentialMatchIndex].isMatched = true
+                }
+                indexOfTheOneAndOnlyFaceUpCard = nil
+            }
+            else {
+                for index in cards.indices {
+                    cards[index].isFaceUp = false
+                }
+                indexOfTheOneAndOnlyFaceUpCard = chosenIndex
+            }
+            cards[chosenIndex].isFaceUp.toggle()
+        }
+        
         print(cards)
     }
     
-    func index(of card: Card) -> Int {
+    func index(of card: Card) -> Int? {
         for index in 0..<cards.count{
             if cards[index].id == card.id {
                 return index
             }
         }
         
-        return 0
+        return nil
     }
     
     init(numberOfPairsOfCards: Int, createCard: (Int) -> CardContent ) {

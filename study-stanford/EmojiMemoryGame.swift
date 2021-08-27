@@ -8,7 +8,8 @@
 import SwiftUI
 
 // ViewModel
-class EmojiMemoryGame {
+// ObservableObject는 somethings change 감지할 수 잇는 객체
+class EmojiMemoryGame: ObservableObject {
     // Model과 Viewdml wndrowk
     // 디스크나 네트워크 또는 그 밖의 무언가에 해당하는 항목을 유지하도록 하는 것이 뷰모델
     
@@ -23,9 +24,16 @@ class EmojiMemoryGame {
         MemoryGame<String>(numberOfPairsOfCards: 4, createCard: { paireIndex in  EmojiMemoryGame.emojis[paireIndex] })
     }
     
-    private var model: MemoryGame<String> = createMemoryGam()
+    // @Published는 objectWillChange가 발생 할 때 감지할 변수를 표시하는 어노테이션
+    @Published private var model: MemoryGame<String> = createMemoryGam()
     
     var cards: Array<MemoryGame<String>.Card> {
         return model.cards
+    }
+    
+    // MARK - Intent(s)
+    
+    func choose(_ card: MemoryGame<String>.Card) {
+        model.choose(card)
     }
 }
